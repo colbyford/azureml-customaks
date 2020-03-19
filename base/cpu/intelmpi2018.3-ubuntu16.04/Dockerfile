@@ -16,6 +16,7 @@ RUN apt-get update && \
     apt-get purge git && \
     apt-get autoremove && \
     apt-get install -y --no-install-recommends \
+    apt-utils \
     #git
     git-daemon-sysvinit \
     git-all \
@@ -83,6 +84,7 @@ ENV TAR="/bin/tar"
 RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
 RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('odbc', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('RODBC', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('data.table', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('caret', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('glmnet', repos = 'https://cloud.r-project.org/')"
