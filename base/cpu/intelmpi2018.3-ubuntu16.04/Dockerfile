@@ -34,6 +34,7 @@ RUN apt-get update && \
     iproute2 && \
     # Others
     apt-get install -y \
+    libxml2-dev \
     build-essential \
     bzip2 \
     #git=1:2.7.4-0ubuntu1.6 \
@@ -65,3 +66,28 @@ RUN cd /tmp && \
     rm -rf /tmp/l_mpi_${INTEL_MPI_VERSION}* && \
     rm -rf /opt/intel/compilers_and_libraries_${INTEL_MPI_VERSION}/linux/mpi/intel64/lib/debug* && \
     echo "source /opt/intel/compilers_and_libraries_${INTEL_MPI_VERSION}/linux/mpi/intel64/bin/mpivars.sh" >> ~/.bashrc
+
+# Conda + R Environment
+RUN conda install -c r -y \
+    r-essentials=3.6.0 \
+    r-reticulate \
+    rpy2 \
+    r-remotes \
+    r-e1071 \
+    r-optparse && \
+    conda clean -ay && \
+    pip install --no-cache-dir azureml-defaults
+
+# R Packages
+ENV TAR="/bin/tar"
+RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
+RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('odbc', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('data.table', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('caret', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('glmnet', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('XML', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('foreach', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('base64enc', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('lubridate', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('jsonlite', repos = 'https://cloud.r-project.org/')"
