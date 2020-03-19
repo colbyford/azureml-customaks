@@ -3,11 +3,14 @@
 # Licensed under the MIT License.
 
 FROM ubuntu:16.04
+# FROM ubuntu:19.10
 
 USER root:root
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
+
 
 # Install Common Dependencies
 RUN apt-get update && \
@@ -15,13 +18,15 @@ RUN apt-get update && \
     apt-get purge git-all && \
     apt-get purge git && \
     apt-get autoremove && \
+    apt-get install -y debconf-utils apt-utils && \
     apt-get install -y --no-install-recommends \
-    apt-utils \
     #git
     git-daemon-sysvinit \
     git-all \
     # ODBC
-    unixodbc-dev \
+    # libiodbc2-dev \
+    # msodbcsql17 \
+    # unixodbc-dev \
     # SSH and RDMA
     libmlx4-1 \
     libmlx5-1 \
@@ -29,6 +34,8 @@ RUN apt-get update && \
     libibverbs1 \
     libmthca1 \
     libdapl2 \
+    curl \
+    apt-transport-https \
     dapl2-utils \
     openssh-client \
     openssh-server \
@@ -43,6 +50,17 @@ RUN apt-get update && \
     cpio && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
+
+    ## MSSQL ODBC
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list 
+RUN apt-get update -y && ACCEPT_EULA=Y apt-get install -y msodbcsql17 unixodbc-dev mssql-tools
+RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
+RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+RUN /bin/bash -c "source ~/.bashrc"
+# RUN install2.r odbc && \
+# RUN source ~/.bashrc && \
+RUN echo msodbcsql17 msodbcsql/ACCEPT_EULA boolean true | debconf-set-selections
 
 # Conda Environment
 ENV MINICONDA_VERSION 4.5.11
@@ -77,13 +95,14 @@ RUN conda install -c r -y \
     r-e1071 \
     r-optparse && \
     conda clean -ay && \
-    pip install --no-cache-dir azureml-defaults
+    pip install --no-cache-dir azureml-defaults && \
+    pip install pyodbc
 
 # R Packages
 ENV TAR="/bin/tar"
 RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
-RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('odbc', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('RODBC', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('data.table', repos = 'https://cloud.r-project.org/')"
 RUN R -e "install.packages('caret', repos = 'https://cloud.r-project.org/')"
