@@ -11,7 +11,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install Common Dependencies
 RUN apt-get update && \
+    apt-get purge runit && \
+    apt-get purge git-all && \
+    apt-get purge git && \
+    apt-get autoremove && \
     apt-get install -y --no-install-recommends \
+    #git
+    git-daemon-sysvinit \
+    git-all \
     # ODBC
     unixodbc-dev \
     # SSH and RDMA
@@ -29,7 +36,7 @@ RUN apt-get update && \
     apt-get install -y \
     build-essential \
     bzip2 \
-    git=1:2.7.4-0ubuntu1.6 \
+    #git=1:2.7.4-0ubuntu1.6 \
     wget \
     cpio && \
     apt-get clean -y && \
