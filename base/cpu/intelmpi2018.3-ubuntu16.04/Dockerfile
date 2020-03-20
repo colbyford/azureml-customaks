@@ -54,13 +54,14 @@ RUN apt-get update && \
     ## MSSQL ODBC
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list 
-RUN apt-get update -y && ACCEPT_EULA=Y apt-get install -y msodbcsql17 unixodbc-dev mssql-tools
+RUN apt-get update -y && ACCEPT_EULA=Y apt-get install -y msodbcsql17 unixodbc-dev odbcinst mssql-tools
 RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 # RUN install2.r odbc && \
 # RUN source ~/.bashrc && \
 RUN echo msodbcsql17 msodbcsql/ACCEPT_EULA boolean true | debconf-set-selections
+RUN odbcinst -q -d
 
 # Conda Environment
 ENV MINICONDA_VERSION 4.5.11
@@ -99,16 +100,17 @@ RUN conda install -c r -y \
     pip install pyodbc
 
 # R Packages
-ENV TAR="/bin/tar"
-RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
-RUN R -e "install.packages('odbc', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('RODBC', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('data.table', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('caret', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('glmnet', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('XML', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('foreach', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('base64enc', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('lubridate', repos = 'https://cloud.r-project.org/')"
-RUN R -e "install.packages('jsonlite', repos = 'https://cloud.r-project.org/')"
+# ENV TAR="/bin/tar"
+# RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
+# # RUN R -e "install.packages('odbc', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "remotes::install_github('r-dbi/odbc', build = FALSE, quiet = TRUE)"
+# RUN R -e "install.packages('DBI', repos = 'https://cloud.r-project.org/')"
+# # RUN R -e "install.packages('RODBC', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('data.table', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('caret', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('glmnet', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('XML', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('foreach', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('base64enc', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('lubridate', repos = 'https://cloud.r-project.org/')"
+# RUN R -e "install.packages('jsonlite', repos = 'https://cloud.r-project.org/')"
