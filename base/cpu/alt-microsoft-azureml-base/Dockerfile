@@ -22,13 +22,21 @@ RUN conda install -c r -y \
     pip install --no-cache-dir \
     azureml-defaults
 
+# RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+#   && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+#   && apt-get update \
+#   && ACCEPT_EULA=Y apt-get -y install msodbcsql=13.1.4.0-1 mssql-tools=14.0.4.0-1 \
+#   && ln -sfn /opt/mssql-tools/bin/sqlcmd-13.1.4.0 /usr/bin/sqlcmd \
+#   && ln -sfn /opt/mssql-tools/bin/bcp-13.1.4.0 /usr/bin/bcp
+#   # Driver name: [ODBC Driver 13 for SQL Server]
+
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
   && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
   && apt-get update \
-  && ACCEPT_EULA=Y apt-get -y install msodbcsql=13.1.4.0-1 mssql-tools=14.0.4.0-1 \
-  && ln -sfn /opt/mssql-tools/bin/sqlcmd-13.1.4.0 /usr/bin/sqlcmd \
-  && ln -sfn /opt/mssql-tools/bin/bcp-13.1.4.0 /usr/bin/bcp
-  # Driver name: [ODBC Driver 13 for SQL Server]
+  && ACCEPT_EULA=Y apt-get -y install msodbcsql17 mssql-tools \
+  && ln -sfn /opt/mssql-tools/bin/sqlcmd /usr/bin/sqlcmd \
+  && ln -sfn /opt/mssql-tools/bin/bcp /usr/bin/bcp
+  # Driver name: [ODBC Driver 17 for SQL Server]
 
 ENV TAR="/bin/tar"
 #RUN R -e "remotes::install_cran('azuremlsdk', repos = 'https://cloud.r-project.org/', upgrade = FALSE)"
