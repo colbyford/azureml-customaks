@@ -30,6 +30,7 @@ RUN conda install -c r -y \
 #   && ln -sfn /opt/mssql-tools/bin/bcp-13.1.4.0 /usr/bin/bcp
 #   # Driver name: [ODBC Driver 13 for SQL Server]
 
+## Install ODBC Dependencies for MS SQL Server
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
   && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
   && apt-get update \
